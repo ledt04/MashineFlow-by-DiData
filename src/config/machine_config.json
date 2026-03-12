@@ -1,0 +1,31 @@
+{
+    "machines": [
+        {
+            "machine_id": 0,
+            "display_name": "qubit",
+            "source_config": {
+                "local_directory": "",
+                "file_pattern": "*.csv",
+                "polling_interval_sec": 60
+            },
+            "api_config": {
+                "dna": "",
+                "pcr": "",
+                "lib": ""
+            }
+        },
+        {
+            "machine_id": 1,
+            "display_name": "fragmentanalyzer",
+            "source_config": {
+                "local_directory": "",
+                "file_pattern": "*.csv",
+                "polling_interval_sec": 60
+            },
+            "api_config": {
+                "pcr": "",
+                "lib": ""
+            }
+        }
+    ]
+}
