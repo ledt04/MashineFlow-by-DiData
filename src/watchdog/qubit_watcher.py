@@ -1,5 +1,6 @@
 import os
 import time
+from pathlib import Path
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 from src.config.settings import get_local_directory, get_qubit_id
@@ -21,8 +22,17 @@ def watch_qubit():
     observer = Observer()
     handler = Handler()
 
-    directory = get_local_directory(get_qubit_id())
-    if not directory or not os.path.isdir(directory):
+    qubit_id = get_qubit_id()
+    raw = get_local_directory(qubit_id)
+    
+    print(f"qubit_id: {repr(qubit_id)}")
+    print(f"raw path: {repr(raw)}")   # repr() reveals hidden/corrupt characters
+    
+    directory = Path(raw)
+    print(f"resolved: {repr(directory)}")
+    print(f"exists: {directory.exists()}")
+    
+    if not directory.exists():
         raise ValueError(f"Invalid directory configured: {directory}")
 
     observer.schedule(handler, path=directory)
