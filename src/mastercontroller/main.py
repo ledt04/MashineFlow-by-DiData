@@ -23,7 +23,7 @@ class MaschineHandler(FileSystemEventHandler):
         
         file_path = Path(event.src_path)
         print(f"{self.machine_type} file detected: {file_path.name}")
-        
+        time.sleep(1)
         session = login()
         try:
             if self.machine_type == "qubit":

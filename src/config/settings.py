@@ -49,11 +49,15 @@ def get_qubit_genomics(genomic):
     return None
 
 def get_fa_qc_by_id(id):
+    for name, id_val in CONFIG_PATH["didata"]["state_id"].items():
+        if id_val == id:
+            return name
+    return None
+
+def get_fa_qc_by_name(name):
     for machine in CONFIG_PATH["machines"]:
         if machine["display_name"] == "fragmentanalyzer":
-            for qc_name, qc_id in machine["api_config"]["qc"].items():
-                if qc_id == id:
-                    return qc_name
+            return machine["api_config"].get(name, "Name not found")
     return None
 
 def get_project_id(session, name):

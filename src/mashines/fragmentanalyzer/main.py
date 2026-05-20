@@ -4,9 +4,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 from src.utils.csv_manager import load_csv
 from src.mashines.fragmentanalyzer.api_manager import get_state_id, get_entities
-from src.config.settings import get_fa_qc, get_workflow_id_by_name, set_workflow_id, get_local_directory, get_fragmentanalyzer_id, get_workflow_id, get_state_id_by_id
+from src.config.settings import get_fa_qc_by_name, get_workflow_id_by_name, set_workflow_id, get_local_directory, get_fragmentanalyzer_id, get_workflow_id, get_state_id_by_id
 from src.mashines.fragmentanalyzer.data_extracter import extract_sample_peaks
-from src.mashines.fragmentanalyzer.sample_classifier import sample_classifier
+from src.mashines.fragmentanalyzer.sample_classifier import sample_classifier, switch_name_with_id
 from src.mashines.fragmentanalyzer.sample_uploader import upload_fa
 from src.utils.error_handling import handle_upload_responses
 
@@ -14,9 +14,8 @@ def main(session):
     load_dotenv()
     workflow_id = get_workflow_id_by_name(session, os.getenv("WORKFLOW"))
     set_workflow_id(workflow_id)
-    
     # Get Data from DiData from Visualization Nodes
-    qcs = [get_fa_qc("pcr"), get_fa_qc("lib")]
+    qcs = [get_fa_qc_by_name("pcr"), get_fa_qc_by_name("lib")]
     state_ids = get_state_id(session, qcs, get_workflow_id())
     didata_sample_names = get_entities(session, state_ids.values())
     # print(json.dumps(didata_sample_names, indent=4))
@@ -25,9 +24,15 @@ def main(session):
     csv_df = load_csv(Path(get_local_directory(get_fragmentanalyzer_id())))
     sample_peaks = extract_sample_peaks(csv_df)
     
-    qc = sample_classifier(sample_peaks.keys(), didata_sample_names)
+    qc = sample_classifier(sample_peaks, didata_sample_names)
     # missing error handling for no matching sample names
     print(f"Detected QC type: {get_state_id_by_id(qc)}")
+    
+    # remove Blank and Ladder samples from sample_peaks
+    sample_peaks = {sample: peaks for sample, peaks in sample_peaks.items() if sample not in ["BLANK", "LADDER"]}
+    
+    # in sample peaks change all samples names to corresponding id from DiData
+    sample_peaks = switch_name_with_id(sample_peaks, didata_sample_names)
     
     # Data Upload to DiData
     response = upload_fa(session, sample_peaks, qc)

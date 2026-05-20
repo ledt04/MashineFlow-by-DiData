@@ -7,7 +7,7 @@ def need_human_validation(sample_peaks):
         # is value between 500 - 700?
         if 500 <= sample_peaks[0] <= 700:
             return sample_peaks[0], False
-        return sample_peaks[0], True
+        return sample_peaks, True
     else:
         # is only 1 value between 500 - 700 and rest of the other peaks between 100 - 300?
         correct_peaks = [peak for peak in sample_peaks if 500 <= peak <= 700]

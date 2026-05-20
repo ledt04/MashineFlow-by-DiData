@@ -12,9 +12,6 @@ def upload_fa(session, sample_peaks, qc):
         }
     }
     
-    print(sample_peaks)
-    print(qc)
-    
     # FA Raw Data -> DiData Names
     # Correct Size BP -> Fragment_Size_bp_DNA
     # Is_visualized: True
